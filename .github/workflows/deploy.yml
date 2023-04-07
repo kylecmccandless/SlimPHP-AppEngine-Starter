@@ -1,4 +1,4 @@
-name: Tests
+name: Deploy to GAE
 
 on: [push, pull_request]
 
@@ -47,3 +47,13 @@ jobs:
               run: |
                   composer require php-coveralls/php-coveralls -n -W
                   vendor/bin/php-coveralls --coverage_clover=clover.xml -v
+
+    deploy:
+      needs: tests
+      name: Deploy an App Engine app
+      id: deploy-app
+      uses: google-github-actions/deploy-appengine@latest
+      with:
+        project: ${{ secrets.gcp_project }}
+        deliverables: app.yaml
+        credentials: ${{ secrets.gcp_credentials }}
